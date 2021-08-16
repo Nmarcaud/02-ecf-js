@@ -1,0 +1,432 @@
+/* Toutes mes couleurs */
+
+/* Grapefruit */
+.grape-1 {
+	color:#F76D87;
+}
+.grape-2 {
+	color:#EC5564;
+}
+.grape-3 {
+	color:#D94452;
+}
+.bg-grape-1 {
+	background-color:#F76D87;
+	color: white;
+	border:2px solid white;
+}
+.bg-grape-2 {
+	background-color:#EC5564;
+	color: white;
+	border:2px solid white;
+}
+.bg-grape-3 {
+	background-color:#D94452;
+	color: white;
+	border:2px solid white;
+}
+.border-grape-1 {
+	border:2px solid #F76D87;
+}
+.border-grape-2 {
+	border:2px solid #EC5564;
+}
+.border-grape-3 {
+	border:2px solid #D94452;
+}
+
+
+/* Bittersweet */
+.bitter-1 {
+	color:#FC8370;
+}
+.bitter-2 {
+	color:#FB6D51;
+}
+.bitter-3 {
+	color:#EB563F;
+}
+.bg-bitter-1 {
+	background-color:#FC8370;
+	color: white;
+	border:2px solid white;
+}
+.bg-bitter-2 {
+	background-color:#FB6D51;
+	color: white;
+	border:2px solid white;
+}
+.bg-bitter-3 {
+	background-color:#EB563F;
+	color: white;
+	border:2px solid white;
+}
+.border-bitter-1 {
+	border:2px solid #FC8370;
+}
+.border-bitter-2 {
+	border:2px solid #FB6D51;
+}
+.border-bitter-3 {
+	border:2px solid #EB563F;
+}
+
+
+/* Sunflower */
+.sunflo-1 {
+	color:#FCD277;
+}
+.sunflo-2 {
+	color:#FECD57;
+}
+.sunflo-3 {
+	color:#F5BA45;
+}
+.bg-sunflo-1 {
+	background-color:#FCD277;
+	color: white;
+	border:2px solid white;
+}
+.bg-sunflo-2 {
+	background-color:#FECD57;
+	color: white;
+	border:2px solid white;
+}
+.bg-sunflo-3 {
+	background-color:#F5BA45;
+	color: white;
+	border:2px solid white;
+}
+.border-sunflo-1 {
+	border:2px solid #FCD277;
+}
+.border-sunflo-2 {
+	border:2px solid #FECD57;
+}
+.border-sunflo-3 {
+	border:2px solid #F5BA45;
+}
+
+
+/* Grass */
+.grass-1 {
+	color:#B4E080;
+}
+.grass-2 {
+	color:#9ED36A;
+}
+.grass-3 {
+	color:#8AC054;
+}
+.bg-grass-1 {
+	background-color:#B4E080;
+	color: white;
+	border:2px solid white;
+}
+.bg-grass-2 {
+	background-color:#9ED36A;
+	color: white;
+	border:2px solid white;
+}
+.bg-grass-3 {
+	background-color:#8AC054;
+	color: white;
+	border:2px solid white;
+}
+.border-grass-1 {
+	border:2px solid #B4E080;
+}
+.border-grass-2 {
+	border:2px solid #9ED36A;
+}
+.border-grass-3 {
+	border:2px solid #8AC054;
+}
+
+
+/* Mint */
+.mint-1 {
+	color:#6ADDBD;
+}
+.mint-2 {
+	color:#46CEAD;
+}
+.mint-3 {
+	color:#35BB9B;
+}
+.bg-mint-1 {
+	background-color:#6ADDBD;
+	color: white;
+	border:2px solid white;
+}
+.bg-mint-2 {
+	background-color:#46CEAD;
+	color: white;
+	border:2px solid white;
+}
+.bg-mint-3 {
+	background-color:#35BB9B;
+	color: white;
+	border:2px solid white;
+}
+.border-mint-1 {
+	border:2px solid #6ADDBD;
+}
+.border-mint-2 {
+	border:2px solid #46CEAD;
+}
+.border-mint-3 {
+	border:2px solid #35BB9B;
+}
+
+
+/* Aqua */
+.aqua-1 {
+	color:#82D2ED;
+}
+.aqua-2 {
+	color:#6FBCE4;
+}
+.aqua-3 {
+	color:#5DAAD5;
+}
+.bg-aqua-1 {
+	background-color:#82D2ED;
+	color: white;
+	border:2px solid white;
+}
+.bg-aqua-2 {
+	background-color:#6FBCE4;
+	color: white;
+	border:2px solid white;
+}
+.bg-aqua-3 {
+	background-color:#5DAAD5;
+	color: white;
+	border:2px solid white;
+}
+.border-aqua-1 {
+	border:2px solid #82D2ED;
+}
+.border-aqua-2 {
+	border:2px solid #6FBCE4;
+}
+.border-aqua-3 {
+	border:2px solid #5DAAD5;
+}
+
+
+/* Blue Jeans */
+.blue-1 {
+	color:#73B1F4;
+}
+.blue-2 {
+	color:#5E9CEA;
+}
+.blue-3 {
+	color:#4B89DA;
+}
+.bg-blue-1 {
+	background-color:#73B1F4;
+	color: white;
+	border:2px solid white;
+}
+.bg-blue-2 {
+	background-color:#5E9CEA;
+	color: white;
+	border:2px solid white;
+}
+.bg-blue-3 {
+	background-color:#4B89DA;
+	color: white;
+	border:2px solid white;
+}
+.border-blue-1 {
+	border:2px solid #73B1F4;
+}
+.border-blue-2 {
+	border:2px solid #5E9CEA;
+}
+.border-blue-3 {
+	border:2px solid #4B89DA;
+}
+
+
+
+/* Lavender (violet) */
+.lav-1 {
+	color:#B3A5EF;
+}
+.lav-2 {
+	color:#AC96EA;
+}
+.lav-3 {
+	color:#967ADA;
+}
+.bg-lav-1 {
+	background-color:#B3A5EF;
+	color: white;
+	border:2px solid white;
+}
+.bg-lav-2 {
+	background-color:#AC96EA;
+	color: white;
+	border:2px solid white;
+}
+.bg-lav-3 {
+	background-color:#967ADA;
+	color: white;
+	border:2px solid white;
+}
+.border-lav-1 {
+	border:2px solid #B3A5EF;
+}
+.border-lav-2 {
+	border:2px solid #AC96EA;
+}
+.border-lav-3 {
+	border:2px solid #967ADA;
+}
+
+
+/* Pink */
+.pink-1 {
+	color:#F299CE;
+}
+.pink-2 {
+	color:#EB87BF;
+}
+.pink-3 {
+	color:#D670AC;
+}
+.bg-pink-1 {
+	background-color:#F299CE;
+	color: white;
+	border:2px solid white;
+}
+.bg-pink-2 {
+	background-color:#EB87BF;
+	color: white;
+	border:2px solid white;
+}
+.bg-pink-3 {
+	background-color:#D670AC;
+	color: white;
+	border:2px solid white;
+}
+.border-pink-1 {
+	border:2px solid #F299CE;
+}
+.border-pink-2 {
+	border:2px solid #EB87BF;
+}
+.border-pink-3 {
+	border:2px solid #D670AC;
+}
+
+
+/* Skin Tone */
+.skin-1 {
+	color:#F4D0B5;
+}
+.skin-2 {
+	color:#F0C8A5;
+}
+.skin-3 {
+	color:#E4B693;
+}
+.bg-skin-1 {
+	background-color:#F4D0B5;
+	color: white;
+	border:2px solid white;
+}
+.bg-skin-2 {
+	background-color:#F0C8A5;
+	color: white;
+	border:2px solid white;
+}
+.bg-skin-3 {
+	background-color:#E4B693;
+	color: white;
+	border:2px solid white;
+}
+.border-skin-1 {
+	border:2px solid #F4D0B5;
+}
+.border-skin-2 {
+	border:2px solid #F0C8A5;
+}
+.border-skin-3 {
+	border:2px solid #E4B693;
+}
+
+
+/* Light Gray */
+.lg-1 {
+	color:#F4F6F9;
+}
+.lg-2 {
+	color:#E5E8E7;
+}
+.lg-3 {
+	color:#CBD0D8;
+}
+.bg-lg-1 {
+	background-color:#F4F6F9;
+	border:2px solid white;
+}
+.bg-lg-2 {
+	background-color:#E5E8E7;
+	border:2px solid white;
+}
+.bg-lg-3 {
+	background-color:#CBD0D8;
+	border:2px solid white;
+}
+.border-lg-1 {
+	border:2px solid #F4F6F9;
+}
+.border-lg-2 {
+	border:2px solid #E5E8E7;
+}
+.border-lg-3 {
+	border:2px solid #CBD0D8;
+}
+
+
+
+/* Dark Gray */
+.dg-1 {
+	color:#A9BABC;
+}
+.dg-2 {
+	color:#646C77;
+}
+.dg-3 {
+	color:#424953;
+}
+.bg-dg-1 {
+	background-color:#A9BABC;
+	color: white;
+	border:2px solid white;
+}
+.bg-dg-2 {
+	background-color:#646C77;
+	color: white;
+	border:2px solid white;
+}
+.bg-dg-3 {
+	background-color:#424953;
+	color: white;
+	border:2px solid white;
+}
+.border-dg-1 {
+	border:2px solid #A9BABC;
+}
+.border-dg-2 {
+	border:2px solid #646C77;
+}
+.border-dg-3 {
+	border:2px solid #424953;
+}
+
