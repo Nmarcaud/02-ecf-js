@@ -13,9 +13,8 @@ const loading =  document.querySelector('#loading');
 const nbResults = document.querySelector("#nb-results");
 
 // Gestion Modal
-
-// Modal
 const infoModal = new bootstrap.Modal(document.querySelector("#info-modal"));
+// Modal
 const modalTitle = document.querySelector('.modal-title');
 const modalSongTitle = document.querySelector('#song-title');
 const modalSongArtist = document.querySelector('#song-artist');
@@ -23,6 +22,7 @@ const modalSongAlbum = document.querySelector('#song-album');
 const modalSongGenres = document.querySelector('#song-genres');
 const modalSongLength = document.querySelector('#song-length');
 const modalSongRate = document.querySelector('#song-rate');
+const coverArts = document.querySelector('#cover-arts');
 
 
 searchField.addEventListener("input", () => {
