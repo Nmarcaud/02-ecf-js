@@ -33,10 +33,79 @@ function getSelectHelper(something, limit) {
     xhr.send();
 }
 
+// Fonction d'affichage d'une ligne de résultats
+function showLineResult(count, title, artist , release, mbid) {
 
+    // Ligne de résultat
+    // Ligne - li
+    const liResult = document.createElement('li');
+    liResult.classList = "row py-3";
+    searchResults.appendChild(liResult);
+        
+    // id
+    const colId = document.createElement('div');
+    colId.classList = "col";
+    colId.textContent = count + 1;
+    liResult.appendChild(colId);
+
+    // Title
+    const colTitle = document.createElement('div');
+    colTitle.classList = "col";
+    colTitle.textContent = title;
+    liResult.appendChild(colTitle);
+
+    // Artist
+    const colArtist = document.createElement('div');
+    colArtist.classList = "col";
+    colArtist.textContent = artist;
+    liResult.appendChild(colArtist);
+
+    // Album
+    const colAlbum = document.createElement('div');
+    colAlbum.classList = "col";
+    colAlbum.textContent = release;
+    liResult.appendChild(colAlbum);
+
+    // Action
+    const colAction = document.createElement('div');
+    colAction.classList = "col text-center";
+    liResult.appendChild(colAction);
+
+    // Bouton +
+    const infoButton = document.createElement('button');
+    infoButton.id = mbid;                                                 // MBID
+    infoButton.classList = "btn px-4 py-3 bg-blue-2 info-btn fw-bold";
+    infoButton.textContent = "+";
+    colAction.appendChild(infoButton);
+
+    // Plus d'infos
+    infoButton.addEventListener('click', () => {
+
+        // Update infos modal
+        modalUpdate(infoButton.id);
+
+        //
+        infoModal.show();
+    });
+}
+
+function showMore(offset) {
+
+    // Ligne - li
+    const liResult = document.createElement('li');
+    liResult.classList = "row py-3";
+    searchResults.appendChild(liResult);
+        
+    // id
+    const colId = document.createElement('div');
+    colId.classList = "col";
+    colId.textContent = `En voir plus. ${offset}`;
+    liResult.appendChild(colId);
+
+}
 
 // Title
-function getTitle(something) {
+function getTitle(something, offset) {
 
     console.log('Recherche titre : ' + something);
 
@@ -61,69 +130,23 @@ function getTitle(something) {
                 // Nombre de résultats
                 const colNbResults = document.createElement('div');
                 colNbResults.classList = "col d-flex justify-content-end"
-                colNbResults.textContent = `${response.count} résultats`;
+                colNbResults.textContent = `${response['count']} résultats`;
                 nbResults.appendChild(colNbResults);
 
                 // Si Résultats
                 if (response.recordings) {
-                    response.recordings.forEach((item, key) => {
 
-                        // Ligne de résultat
-                        // Ligne - li
-                        const liResult = document.createElement('li');
-                        liResult.classList = "row py-3";
-                        searchResults.appendChild(liResult);
-                            
-                        // id
-                        const colId = document.createElement('div');
-                        colId.classList = "col";
-                        colId.textContent = key + 1;
-                        liResult.appendChild(colId);
-                        
-                        // Title
-                        const colTitle = document.createElement('div');
-                        colTitle.classList = "col";
-                        colTitle.textContent = item.title;
-                        liResult.appendChild(colTitle);
+                    // Compteur pour offset
+                    let count = 0;
 
-                        // Artist
-                        const colArtist = document.createElement('div');
-                        colArtist.classList = "col";
-                        colArtist.textContent = item["artist-credit"][0].name;
-                        liResult.appendChild(colArtist);
+                    response.recordings.forEach((result, key) => {
 
-                        // Album
-                        const colAlbum = document.createElement('div');
-                        colAlbum.classList = "col";
-                        if (item["releases"]) {
-                            colAlbum.textContent = item["releases"][0].title;
-                        } else {
-                            colAlbum.textContent = "";
-                        }
-                        liResult.appendChild(colAlbum);
+                        // RÉSULTATS
+                        showLineResult(key, result['title'], result['artist-credit'][0]['name'], result['releases'] ? result['releases'][0]['title'] : '', result['id']);
 
-                        // Action
-                        const colAction = document.createElement('div');
-                        colAction.classList = "col text-center";
-                        liResult.appendChild(colAction);
-
-                        // Bouton +
-                        const infoButton = document.createElement('button');
-                        infoButton.id = item["id"];                                                 // MBID
-                        infoButton.classList = "btn px-4 py-3 bg-blue-2 info-btn fw-bold";
-                        infoButton.textContent = "+";
-                        colAction.appendChild(infoButton);
-
-                        // Plus d'infos
-                        infoButton.addEventListener('click', () => {
-
-                            // Update infos modal
-                            modalUpdate(infoButton.id);
-
-                            //
-                            infoModal.show();
-                        });
-
+                        // Compteur pour offset
+                        count = key + 1;
+                      
                     });
                 }
             }
@@ -133,7 +156,7 @@ function getTitle(something) {
 }
 
 // Albums
-function getRelease(something) {
+function getRelease(something, offset) {
 
     console.log('Recherche album : ' + something);
 
@@ -143,7 +166,7 @@ function getRelease(something) {
     loading.classList.toggle("d-none");
 
     const searchXhr = new XMLHttpRequest();
-    searchXhr.open('GET', `http://musicbrainz.org/ws/2/release/?query=release:"${encodeURIComponent(something)}"&limit=100&fmt=json`, true);
+    searchXhr.open('GET', `http://musicbrainz.org/ws/2/recording/?query=release:"${encodeURIComponent(something)}"&limit=100&fmt=json`, true);
 
     searchXhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     
@@ -152,113 +175,34 @@ function getRelease(something) {
         if (searchXhr.readyState === 4) {
             if (searchXhr.status === 200) {
 
-                let artistResponse = JSON.parse(searchXhr.responseText);
-                console.log(artistResponse);
+                let releasesResponse = JSON.parse(searchXhr.responseText);
+                console.log(releasesResponse);
+
+                // Masquage loader
+                loading.classList.toggle("d-none");
 
                 // Nombre de résultats
                 const colNbResults = document.createElement('div');
                 colNbResults.classList = "col d-flex justify-content-end"
-                colNbResults.textContent = `${artistResponse.count} résultats`;
+                colNbResults.textContent = `${releasesResponse['count']} résultats`;
                 nbResults.appendChild(colNbResults);
-                
+
                 // If Releases
-                if (artistResponse.releases) {
+                if (releasesResponse.recordings) {
+
+                    // Compteur pour offset
+                    let count = 0;
                    
                     // Pour chaques album, recherches des chansons ---------------------------------------------------------------------------------
-                    artistResponse.releases.forEach((release) => {
+                    releasesResponse.recordings.forEach((result, key) => {
+                    
+                        // RÉSULTATS
+                        showLineResult(key, result['title'], result['artist-credit'][0]['name'], result['releases'] ? result['releases'][0]['title'] : '', result['id']);
 
-                        // Log
-                        console.log('Recherche des chansons pour : ' + release["artist-credit"][0].name + ' | ' + release.title);
-
-                        const releaseXhr = new XMLHttpRequest();
-                        releaseXhr.open('GET', `http://musicbrainz.org/ws/2/release/${release.id}?inc=recordings&limit=100&fmt=json`, true);
-        
-                        releaseXhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                        
-                        releaseXhr.addEventListener("readystatechange", () => {
-                            if (releaseXhr.readyState === 4) {
-                                if (releaseXhr.status === 200) {
-
-                                    // Masquage loader
-                                    loading.classList.toggle("d-none");
-        
-                                    let recordingResponse = JSON.parse(releaseXhr.responseText);
-                                    // console.log(recordingResponse);
-
-                                    // If Recording
-                                    if (recordingResponse.media[0].tracks) {
-
-                                        // Pour chaques chansons, affiche les infos ---------------------------------------------------------------------------------
-                                        recordingResponse.media[0].tracks.forEach((record) => {
-
-                                            // Log
-                                            // console.log(record.recording.title + ' | ' + release.title + ' | ' + artist.name);
-                                        
-                                            // Ligne de résultat
-                                            // Ligne - li
-                                            const liResult = document.createElement('li');
-                                            liResult.classList = "row py-3";
-                                            searchResults.appendChild(liResult);
-                                                
-                                            // id
-                                            const colId = document.createElement('div');
-                                            colId.classList = "col";
-                                            colId.textContent = count;
-                                            liResult.appendChild(colId);
-
-                                            // Compteur
-                                            count += 1;
-                                            
-                                            // Title
-                                            const colTitle = document.createElement('div');
-                                            colTitle.classList = "col";
-                                            colTitle.textContent = record.recording.title;
-                                            liResult.appendChild(colTitle);
-
-                                            // Artist
-                                            const colArtist = document.createElement('div');
-                                            colArtist.classList = "col";
-                                            colArtist.textContent = release["artist-credit"][0].name;
-                                            liResult.appendChild(colArtist);
-
-                                            // Album
-                                            const colAlbum = document.createElement('div');
-                                            colAlbum.classList = "col";
-                                            colAlbum.textContent = release.title;
-                                            liResult.appendChild(colAlbum);
-
-                                            // Action
-                                            const colAction = document.createElement('div');
-                                            colAction.classList = "col text-center";
-                                            liResult.appendChild(colAction);
-
-                                            // Bouton +
-                                            const infoButton = document.createElement('button');
-                                            infoButton.id = record.recording.id;                                                 // MBID
-                                            infoButton.classList = "btn px-4 py-3 bg-blue-2 info-btn fw-bold";
-                                            infoButton.textContent = "+";
-                                            colAction.appendChild(infoButton);
-
-                                            // Plus d'infos
-                                            infoButton.addEventListener('click', () => {
-
-                                                // Update infos modal
-                                                modalUpdate(infoButton.id);
-
-                                                //
-                                                infoModal.show();
-                                            });
-
-                                        }); // End - forEach Recording
-                                    } // End - If Recording
-                                } // End - releaseXhr - Status 200
-                            } // End - releaseXhr - readyState 4
-                        }); // End - releaseXhr - eventListener - readyStateChange
-
-                        releaseXhr.send();
-
+                        // Compteur pour offset
+                        count = key + 1;
+                       
                     }); // End - forEach Release
-                
                 } // End - If Releases
             } // End - searchXhr - Status 200
         } // End - searchXhr - readyState 4
@@ -269,19 +213,19 @@ function getRelease(something) {
 }
 
 
+
 // Artists
-function getArtist(something) {
+function getArtist(something, offset) {
 
     console.log('Recherche artiste : ' + something);
 
     let count = 1;
-    let totalResult = 0;
 
     // Affichage loader
     loading.classList.toggle("d-none");
 
     const searchXhr = new XMLHttpRequest();
-    searchXhr.open('GET', `http://musicbrainz.org/ws/2/artist/?query="${encodeURIComponent(something)}"&limit=100&fmt=json`, true);
+    searchXhr.open('GET', `http://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(something)}"?inc=releases&limit=100&fmt=json`, true);
 
     searchXhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     
@@ -290,156 +234,42 @@ function getArtist(something) {
             if (searchXhr.status === 200) {
 
                 let artistResponse = JSON.parse(searchXhr.responseText);
-                //console.log(artistResponse);
+                console.log(artistResponse);
+
+                // Masquage loader
+                loading.classList.toggle("d-none");
+
+                // Nombre de résultats
+                const colNbResults = document.createElement('div');
+                colNbResults.classList = "col d-flex justify-content-end"
+                colNbResults.textContent = `${artistResponse['count']} résultats`;
+                nbResults.appendChild(colNbResults);
 
                 // If Artist
-                if (artistResponse.artists) {
+                if (artistResponse.recordings) {
+
+                    // Compteur pour offset
+                    let count = 0;
 
                     // Pour chaques artists, recherches des albums ---------------------------------------------------------------------------------
-                    artistResponse.artists.forEach((artist) => {
-
-                        // Log
-                        console.log('Recherche des albums pour : ' + artist.name);
-            
-                        const artistXhr = new XMLHttpRequest();
-                        
-                        // recording/?query=artist:"ton artiste"
-                        artistXhr.open('GET', `http://musicbrainz.org/ws/2/artist/${artist.id}?inc=releases&limit=100&fmt=json`, true);
-        
-                        artistXhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                        artistXhr.setRequestHeader('User-Agent', 'MyMusicApp/1.0 ( nmarcau@gmail.com )');
-                        
-                        artistXhr.addEventListener("readystatechange", () => {
-                            if (artistXhr.readyState === 4) {
-                                if (artistXhr.status === 200) {
-
-                                    let releaseResponse = JSON.parse(artistXhr.responseText);
-                                    // console.log(releaseResponse);
-
-                                    // If Release
-                                    if (releaseResponse.releases) {
-
-                                        // Pour chaques album, recherches des chansons ---------------------------------------------------------------------------------
-                                        releaseResponse.releases.forEach((release) => {
-
-                                            // Log
-                                            console.log('Recherche des chansons pour : ' + artist.name + ' | ' + release.title);
-
-                                            const releaseXhr = new XMLHttpRequest();
-                                            releaseXhr.open('GET', `http://musicbrainz.org/ws/2/release/${release.id}?inc=recordings&limit=100&fmt=json`, true);
-                            
-                                            releaseXhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                                            releaseXhr.setRequestHeader('User-Agent', 'MyMusicApp/1.0 ( nmarcau@gmail.com )');
-                                            
-                                            releaseXhr.addEventListener("readystatechange", () => {
-                                                if (releaseXhr.readyState === 4) {
-                                                    if (releaseXhr.status === 200) {
+                    artistResponse.recordings.forEach((result, key) => {
                     
-                                                        // Masquage loader
-                                                        loading.classList.toggle("d-none");
-                            
-                                                        let recordingResponse = JSON.parse(releaseXhr.responseText);
-                                                        // console.log(recordingResponse);
-
-                                                        // If Recording
-                                                        if (recordingResponse.media[0].tracks) {
-
-                                                            // Pour chaques chansons, affiche les infos ---------------------------------------------------------------------------------
-                                                            recordingResponse.media[0].tracks.forEach((record, key) => {
-
-                                                                totalResult += key;
-                                                                colNbResults.textContent = `${totalResult} résultats`;
-
-
-                                                                // Log
-                                                                // console.log(record.recording.title + ' | ' + release.title + ' | ' + artist.name);
-                                                            
-                                                                // Ligne de résultat
-                                                                // Ligne - li
-                                                                const liResult = document.createElement('li');
-                                                                liResult.classList = "row py-3";
-                                                                searchResults.appendChild(liResult);
-                                                                    
-                                                                // id
-                                                                const colId = document.createElement('div');
-                                                                colId.classList = "col";
-                                                                colId.textContent = count;
-                                                                liResult.appendChild(colId);
-
-                                                                // Compteur
-                                                                count += 1;
-                                                                
-                                                                // Title
-                                                                const colTitle = document.createElement('div');
-                                                                colTitle.classList = "col";
-                                                                colTitle.textContent = record.recording.title;
-                                                                liResult.appendChild(colTitle);
-
-                                                                // Artist
-                                                                const colArtist = document.createElement('div');
-                                                                colArtist.classList = "col";
-                                                                colArtist.textContent = artist.name;
-                                                                liResult.appendChild(colArtist);
-
-                                                                // Album
-                                                                const colAlbum = document.createElement('div');
-                                                                colAlbum.classList = "col";
-                                                                colAlbum.textContent = release.title;
-                                                                liResult.appendChild(colAlbum);
-
-                                                                // Action
-                                                                const colAction = document.createElement('div');
-                                                                colAction.classList = "col text-center";
-                                                                liResult.appendChild(colAction);
-
-                                                                // Bouton +
-                                                                const infoButton = document.createElement('button');
-                                                                infoButton.id = record.recording.id;                                                 // MBID
-                                                                infoButton.classList = "btn px-4 py-3 bg-blue-2 info-btn fw-bold";
-                                                                infoButton.textContent = "+";
-                                                                colAction.appendChild(infoButton);
-
-                                                                // Plus d'infos
-                                                                infoButton.addEventListener('click', () => {
-
-                                                                    // Update infos modal
-                                                                    modalUpdate(infoButton.id);
-
-                                                                    //
-                                                                    infoModal.show();
-                                                                });
-
-                                                            }); // End - forEach Recording
-                                                        } // End - If Recording
-                                                    } // End - releaseXhr - Status 200
-                                                } // End - releaseXhr - readyState 4
-                                            }); // End - releaseXhr - eventListener - readyStateChange
-
-                                            releaseXhr.send();
-
-                                            
-
-                                        }); // End - forEach Release
-                                    } // End - If Release
-                                } // End - artistXhr - Status 200
-                            } // End - artistXhr - readyState 4
-                        }); // End - artistXhr - eventListener - readyStateChange
-
-                        artistXhr.send();
+                        // RÉSULTATS
+                        showLineResult(key, result['title'], result['artist-credit'][0]['name'], result['releases'] ? result['releases'][0]['title'] : '', result['id']);
+                        
+                        // Compteur pour offset
+                        count = key + 1;
 
                     }); // End - forEach Artist
+
+                    showMore(count);
+
                 } // End - If Artist
             } // End - searchXhr - Status 200
         } // End - searchXhr - readyState 4
     }); // End - searchXhr - eventListener - readyStateChange
 
     searchXhr.send();
-
-    // Nombre de résultats
-    const colNbResults = document.createElement('div');
-    colNbResults.classList = "col d-flex justify-content-end"
-    nbResults.appendChild(colNbResults);
-
 }
 
 

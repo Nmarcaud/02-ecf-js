@@ -50,7 +50,7 @@ searchForm.addEventListener("submit", (e) => {
         getTitle(searchField.value);
     } else if (categoryField.value == "artist") {
         getArtist(searchField.value);
-    }
+    } 
 });
 
 
