@@ -19,8 +19,6 @@ body {
 }
 
 
-
-
 #search-row-bar {
     height: 60vh;
 }
@@ -31,9 +29,6 @@ body {
 
 .form-field {
     border-radius: 1rem;
-}
-#submit-btn {
-    width: 100%;
 }
 
 .search-helpers {
@@ -46,6 +41,33 @@ body {
     transform: scale(1.01);
 }
 
+/* BOUTONS */
+#submit-btn {
+    width: 100%;
+}
+
+/* Show more btn*/
+.btn-blue {
+    background-color: var(--blue-2);
+    color: white;
+    transition: ease-in-out .4s;
+    border: 2px solid white;
+}
+.btn-blue:hover {
+    background-color: white;
+    color: var(--blue-2);
+    border: 2px solid var(--blue-2);
+}
+
 .info-btn {
+    border-radius: 1rem;
+}
+
+.btn-more {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: center;
     border-radius: 1rem;
 }

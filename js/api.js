@@ -74,7 +74,7 @@ function showLineResult(count, title, artist , release, mbid) {
     // Bouton +
     const infoButton = document.createElement('button');
     infoButton.id = mbid;                                                 // MBID
-    infoButton.classList = "btn px-4 py-3 bg-blue-2 info-btn fw-bold";
+    infoButton.classList = "btn btn-blue px-4 py-3 info-btn fw-bold";
     infoButton.textContent = "+";
     colAction.appendChild(infoButton);
 
@@ -92,15 +92,26 @@ function showLineResult(count, title, artist , release, mbid) {
 function showMore(offset) {
 
     // Ligne - li
-    const liResult = document.createElement('li');
-    liResult.classList = "row py-3";
-    searchResults.appendChild(liResult);
+    const liShowMore = document.createElement('li');
+    liShowMore.classList = "row py-3 ";
+    searchResults.appendChild(liShowMore);
         
     // id
-    const colId = document.createElement('div');
-    colId.classList = "col";
-    colId.textContent = `En voir plus. ${offset}`;
-    liResult.appendChild(colId);
+    const colShowMore = document.createElement('div');
+    colShowMore.classList = "col";
+    liShowMore.appendChild(colShowMore);
+
+    const buttonShowMore = document.createElement('button');
+    buttonShowMore.value = offset;
+    buttonShowMore.classList = "btn btn-blue btn-more";
+    buttonShowMore.textContent = 'En voir plus !';
+    colShowMore.appendChild(buttonShowMore);
+
+    // Action show more results
+    buttonShowMore.addEventListener('click', () => {
+        liShowMore.remove();
+        getTitle(searchField.value, buttonShowMore.value);
+    });
 
 }
 
@@ -108,12 +119,15 @@ function showMore(offset) {
 function getTitle(something, offset) {
 
     console.log('Recherche titre : ' + something);
+    
+    // Si offset n'est pas défini, count à 0, sinon offset
+    offset == undefined ? count = 0 : count = parseInt(offset);
 
     // Affichage loader
     loading.classList.toggle("d-none");
 
     const searchXhr = new XMLHttpRequest();
-    searchXhr.open('GET', `http://musicbrainz.org/ws/2/recording/?query="${encodeURIComponent(something)}"&limit=100&fmt=json`, true);
+    searchXhr.open('GET', `http://musicbrainz.org/ws/2/recording/?query="${encodeURIComponent(something)}"&limit=100&offset=${offset}&fmt=json`, true);
 
     searchXhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     
@@ -135,19 +149,17 @@ function getTitle(something, offset) {
 
                 // Si Résultats
                 if (response.recordings) {
-
-                    // Compteur pour offset
-                    let count = 0;
-
-                    response.recordings.forEach((result, key) => {
+                    response.recordings.forEach((result) => {
 
                         // RÉSULTATS
-                        showLineResult(key, result['title'], result['artist-credit'][0]['name'], result['releases'] ? result['releases'][0]['title'] : '', result['id']);
+                        showLineResult(count, result['title'], result['artist-credit'][0]['name'], result['releases'] ? result['releases'][0]['title'] : '', result['id']);
 
                         // Compteur pour offset
-                        count = key + 1;
+                        count += 1;
                       
                     });
+                // En voir plus
+                showMore(count);
                 }
             }
         }
@@ -160,13 +172,14 @@ function getRelease(something, offset) {
 
     console.log('Recherche album : ' + something);
 
-    let count = 1;
+    // Si offset n'est pas défini, count à 0, sinon offset
+    offset == undefined ? count = 0 : count = parseInt(offset);
 
     // Affichage loader
     loading.classList.toggle("d-none");
 
     const searchXhr = new XMLHttpRequest();
-    searchXhr.open('GET', `http://musicbrainz.org/ws/2/recording/?query=release:"${encodeURIComponent(something)}"&limit=100&fmt=json`, true);
+    searchXhr.open('GET', `http://musicbrainz.org/ws/2/recording/?query=release:"${encodeURIComponent(something)}"&limit=100&offset=${offset}&fmt=json`, true);
 
     searchXhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     
@@ -189,24 +202,23 @@ function getRelease(something, offset) {
 
                 // If Releases
                 if (releasesResponse.recordings) {
-
-                    // Compteur pour offset
-                    let count = 0;
-                   
-                    // Pour chaques album, recherches des chansons ---------------------------------------------------------------------------------
-                    releasesResponse.recordings.forEach((result, key) => {
+                    releasesResponse.recordings.forEach((result) => {
                     
                         // RÉSULTATS
-                        showLineResult(key, result['title'], result['artist-credit'][0]['name'], result['releases'] ? result['releases'][0]['title'] : '', result['id']);
+                        showLineResult(count, result['title'], result['artist-credit'][0]['name'], result['releases'] ? result['releases'][0]['title'] : '', result['id']);
 
                         // Compteur pour offset
-                        count = key + 1;
+                        count += 1;
                        
-                    }); // End - forEach Release
-                } // End - If Releases
-            } // End - searchXhr - Status 200
-        } // End - searchXhr - readyState 4
-    }); // End - searchXhr - eventListener - readyStateChange
+                    });
+                
+                // En voir plus
+                count < releasesResponse['count'] ? showMore(count):'';
+
+                }
+            }
+        }
+    });
 
     searchXhr.send();
 
@@ -219,13 +231,14 @@ function getArtist(something, offset) {
 
     console.log('Recherche artiste : ' + something);
 
-    let count = 1;
+    // Si offset n'est pas défini, count à 0, sinon offset
+    offset == undefined ? count = 0 : count = parseInt(offset);
 
     // Affichage loader
     loading.classList.toggle("d-none");
 
     const searchXhr = new XMLHttpRequest();
-    searchXhr.open('GET', `http://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(something)}"?inc=releases&limit=100&fmt=json`, true);
+    searchXhr.open('GET', `http://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(something)}"?inc=releases&limit=100&offset=${offset}&fmt=json`, true);
 
     searchXhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     
@@ -248,27 +261,23 @@ function getArtist(something, offset) {
                 // If Artist
                 if (artistResponse.recordings) {
 
-                    // Compteur pour offset
-                    let count = 0;
-
-                    // Pour chaques artists, recherches des albums ---------------------------------------------------------------------------------
-                    artistResponse.recordings.forEach((result, key) => {
+                    artistResponse.recordings.forEach((result) => {
                     
                         // RÉSULTATS
-                        showLineResult(key, result['title'], result['artist-credit'][0]['name'], result['releases'] ? result['releases'][0]['title'] : '', result['id']);
+                        showLineResult(count, result['title'], result['artist-credit'][0]['name'], result['releases'] ? result['releases'][0]['title'] : '', result['id']);
                         
                         // Compteur pour offset
-                        count = key + 1;
+                        count += 1;
 
-                    }); // End - forEach Artist
+                    });
 
-                    showMore(count);
+                // En voir Plus
+                showMore(count);
 
-                } // End - If Artist
-            } // End - searchXhr - Status 200
-        } // End - searchXhr - readyState 4
-    }); // End - searchXhr - eventListener - readyStateChange
-
+                }
+            }
+        }
+    });
     searchXhr.send();
 }
 
