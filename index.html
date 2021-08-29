@@ -27,7 +27,10 @@
 
     <div class="container-fluid bg-blue-2 border-0 mb-5 py-4">
         <div class="container">
-            <h1><i class="far fa-fw fa-turntable"></i> My Music App</h1>
+            <div class="row d-flex justify-content-between align-items-center">
+                <h1 class="col-5"><i class="far fa-fw fa-turntable"></i> My Music App</h1>
+                <h2 id="welcome-text" class="col-7 text-end fs-5 font-monospace">Éh ! Salut toi !</h2>
+            </div>
         </div>
     </div>
 
@@ -43,14 +46,14 @@
 
                             <!-- Search field -->
                             <div class="col-8">
-                                <input id="search-field" type="search" class="form-control form-field border-dg-1 py-3 px-4" placeholder="Artist, Album...">
+                                <input id="search-field" type="search" class="form-control form-field border-dg-1 py-3 px-4" placeholder="Titre, Artist, Album...">
                                 <ul id="search-helpers" class="px-3" role="list"></ul>
                             </div>
 
                             <!-- Select -->
                             <div class="col-2">
                                 <select id="category-search-field" class="form-select form-field border-dg-1 py-3 px-4">
-                                    <option value="area">Everything</option>
+                                    <option value="everything">Everything</option>
                                     <option value="artist">Artist</option>
                                     <option value="recording" selected>Title</option>
                                     <option value="release">Album</option>
@@ -59,7 +62,7 @@
                             
                             <!-- Validation -->
                             <div class="col-2">
-                                <button id="submit-search-btn" type="submit" class="btn form-field btn-blue py-3 px-4 fw-bold">Rechercher</button>
+                                <button id="submit-search-btn" type="submit" class="btn form-field btn-blue py-3 px-4 fw-bold btn-block">Rechercher</button>
                             </div>
 
                         </form>
@@ -77,11 +80,11 @@
                 <hr/>
 
                 <div class="row fw-bold my-3">
-                    <div class="col">#</div>
+                    <div class="col-1">#</div>
                     <div class="col">Titre</div>
                     <div class="col">Artiste</div>
                     <div class="col">Album</div>
-                    <div class="col">Actions</div>
+                    <div class="col-1 text-end">Actions</div>
                 </div>
                 <hr/>
                 <ul id="search-results" role="list">
@@ -120,12 +123,14 @@
                         <p id="song-genres" class="mb-4"></p>
                         <p class="mb-0"><small class="fw-bold text-muted">Length</small></p>
                         <p id="song-length" class="mb-4"></p>
-                        <p class="mb-0"><small class="fw-bold text-muted">Note</small></p>
+                        <p class="mb-0"><small class="fw-bold text-muted">Note</small><small id="song-rate-counter" class="ms-2 text-muted"></small></p>
                         <p id="song-rate"></p>
                     </div>
 
                     <h2>Cover arts</h2>
-                    <div id="cover-arts" class="row p-3"></div>
+                    <div id="cover-arts" class="row p-3">
+                        <p id="cover-loader" class="d-none"><i class="fad fa-fw fa-spin fa-spinner-third fa-2x"></i>Chargement des pochettes</p>
+                    </div>
 
                 </div>
                 <div class="modal-footer">

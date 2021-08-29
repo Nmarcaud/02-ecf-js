@@ -2,12 +2,14 @@
 
 function getSelectHelper(something, limit) {
 
+    console.log('coucou')
+
     searchHelpers.textContent = "";
     
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', `http://musicbrainz.org/ws/2/artist/?query=name:${encodeURIComponent(something)}&limit=${limit}&fmt=json`, true);
+    xhr.open('GET', `http://musicbrainz.org/ws/2/recording/?query="${encodeURIComponent(something)}"&limit=${limit}&fmt=json`, true);
 
-    // xhr.setRequestHeader('User-Agent', 'My-music-app/1.0 ( nmarcau@gmail.com )');
+    // xhr.setRequestHeader('User-Agent', 'My-music-app/1.0 ( nmarcau@gmail.com )');submit-btn
 
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     
@@ -18,14 +20,29 @@ function getSelectHelper(something, limit) {
                 searchHelpers.textContent = "";
 
                 let response = JSON.parse(xhr.responseText);
-                console.log(response);
+                console.log(response.recordings);
 
-                response.annotations.forEach(item => {
+                response.recordings.forEach(item => {
                     const liItem = document.createElement('li');
                     liItem.classList = "search-helpers p-3";
-                    liItem.textContent = item.name;
+                    liItem.textContent = item['title'];
                     searchHelpers.appendChild(liItem);
+
+
+                    // Action show more results
+                    liItem.addEventListener('click', () => {
+
+                        searchHelpers.textContent = "";
+                        searchField.value = liItem.textContent;
+                        // pour garder le focus sur le champ (sinon on ne peut plus valider avec enter !)
+                        searchField.focus();
+
+                    });
+
+
                 });
+
+                
             }
         }
     });
@@ -34,17 +51,18 @@ function getSelectHelper(something, limit) {
 }
 
 // Fonction d'affichage d'une ligne de résultats
-function showLineResult(count, title, artist , release, mbid) {
+function showLineResult(count, title, artist , release, mbid)
+{
 
     // Ligne de résultat
     // Ligne - li
     const liResult = document.createElement('li');
-    liResult.classList = "row py-3";
+    liResult.classList = "row py-3 li-result d-flex align-items-center";
     searchResults.appendChild(liResult);
         
     // id
     const colId = document.createElement('div');
-    colId.classList = "col";
+    colId.classList = "col-1";
     colId.textContent = count + 1;
     liResult.appendChild(colId);
 
@@ -68,7 +86,7 @@ function showLineResult(count, title, artist , release, mbid) {
 
     // Action
     const colAction = document.createElement('div');
-    colAction.classList = "col text-center";
+    colAction.classList = "col-1 text-end";
     liResult.appendChild(colAction);
 
     // Bouton +
@@ -78,18 +96,19 @@ function showLineResult(count, title, artist , release, mbid) {
     infoButton.textContent = "+";
     colAction.appendChild(infoButton);
 
-    // Plus d'infos
+    // Plus d'infos (modal)
     infoButton.addEventListener('click', () => {
 
         // Update infos modal
         modalUpdate(infoButton.id);
-
-        //
         infoModal.show();
     });
 }
 
-function showMore(offset) {
+function showMore(offset, requete)
+{
+
+    console.log(requete);
 
     // Ligne - li
     const liShowMore = document.createElement('li');
@@ -103,14 +122,27 @@ function showMore(offset) {
 
     const buttonShowMore = document.createElement('button');
     buttonShowMore.value = offset;
-    buttonShowMore.classList = "btn btn-blue btn-more";
+    buttonShowMore.setAttribute('data-requete', requete);
+    buttonShowMore.classList = "btn btn-blue btn-more mb-5";
     buttonShowMore.textContent = 'En voir plus !';
     colShowMore.appendChild(buttonShowMore);
 
     // Action show more results
     buttonShowMore.addEventListener('click', () => {
         liShowMore.remove();
-        getTitle(searchField.value, buttonShowMore.value);
+
+        console.log(requete);
+
+        // Function get
+        if (requete == "release") {
+            getRelease(searchField.value, buttonShowMore.value);
+        } else if (requete == "recording") {
+            getTitle(searchField.value, buttonShowMore.value);
+        } else if (requete == "artist") {
+            getArtist(searchField.value, buttonShowMore.value);
+        } else if (categoryField.value == "everything") {
+            getEverything(searchField.value, buttonShowMore.value)
+        }
     });
 
 }
@@ -127,7 +159,7 @@ function getTitle(something, offset) {
     loading.classList.toggle("d-none");
 
     const searchXhr = new XMLHttpRequest();
-    searchXhr.open('GET', `http://musicbrainz.org/ws/2/recording/?query="${encodeURIComponent(something)}"&limit=100&offset=${offset}&fmt=json`, true);
+    searchXhr.open('GET', `http://musicbrainz.org/ws/2/recording/?query=recording:"${encodeURIComponent(something)}"&limit=100&offset=${offset}&fmt=json`, true);
 
     searchXhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     
@@ -159,7 +191,7 @@ function getTitle(something, offset) {
                       
                     });
                 // En voir plus
-                showMore(count);
+                count < response['count'] ? showMore(count , "recording"):'';
                 }
             }
         }
@@ -171,7 +203,7 @@ function getTitle(something, offset) {
 function getRelease(something, offset) {
 
     console.log('Recherche album : ' + something);
-
+    
     // Si offset n'est pas défini, count à 0, sinon offset
     offset == undefined ? count = 0 : count = parseInt(offset);
 
@@ -213,7 +245,7 @@ function getRelease(something, offset) {
                     });
                 
                 // En voir plus
-                count < releasesResponse['count'] ? showMore(count):'';
+                count < releasesResponse['count'] ? showMore(count , "release"):'';
 
                 }
             }
@@ -223,7 +255,6 @@ function getRelease(something, offset) {
     searchXhr.send();
 
 }
-
 
 
 // Artists
@@ -272,7 +303,7 @@ function getArtist(something, offset) {
                     });
 
                 // En voir Plus
-                showMore(count);
+                count < artistResponse['count'] ? showMore(count , "artist"):'';
 
                 }
             }
@@ -281,6 +312,60 @@ function getArtist(something, offset) {
     searchXhr.send();
 }
 
+// Everything
+function getEverything(something, offset) {
+
+    console.log('Recherche partout : ' + something);
+
+    // Si offset n'est pas défini, count à 0, sinon offset
+    offset == undefined ? count = 0 : count = parseInt(offset);
+
+    // Affichage loader
+    loading.classList.toggle("d-none");
+
+    const searchXhr = new XMLHttpRequest();
+    searchXhr.open('GET', `http://musicbrainz.org/ws/2/recording/?query="${encodeURIComponent(something)}"?inc=releases&limit=100&offset=${offset}&fmt=json`, true);
+
+    searchXhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    
+    searchXhr.addEventListener("readystatechange", () => {
+        if (searchXhr.readyState === 4) {
+            if (searchXhr.status === 200) {
+
+                let artistResponse = JSON.parse(searchXhr.responseText);
+                console.log(artistResponse);
+
+                // Masquage loader
+                loading.classList.toggle("d-none");
+
+                // Nombre de résultats
+                const colNbResults = document.createElement('div');
+                colNbResults.classList = "col d-flex justify-content-end"
+                colNbResults.textContent = `${artistResponse['count']} résultats`;
+                nbResults.appendChild(colNbResults);
+
+                // If Artist
+                if (artistResponse.recordings) {
+
+                    artistResponse.recordings.forEach((result) => {
+                    
+                        // RÉSULTATS
+                        showLineResult(count, result['title'], result['artist-credit'][0]['name'], result['releases'] ? result['releases'][0]['title'] : '', result['id']);
+                        
+                        // Compteur pour offset
+                        count += 1;
+
+                    });
+
+                // En voir Plus
+                count < artistResponse['count'] ? showMore(count , "everything"):'';
+
+                }
+            }
+        }
+    });
+    searchXhr.send();
+}
 
 
 
@@ -297,6 +382,9 @@ function modalUpdate (mbid) {
     modalSongRate.textContent = "";
     coverArts.textContent = "";
 
+    // Loader
+    coverLoader.classList.toggle("d-none");
+
 
     const recordingXhr = new XMLHttpRequest();
     recordingXhr.open('GET', `http://musicbrainz.org/ws/2/recording/${mbid}?inc=artist-credits+releases+genres+ratings&fmt=json`, true);
@@ -310,7 +398,6 @@ function modalUpdate (mbid) {
 
                 let recordingResponse = JSON.parse(recordingXhr.responseText);
                 console.log(recordingResponse);
-
 
                 // Modal informations
                 // Titre modal
@@ -326,6 +413,7 @@ function modalUpdate (mbid) {
 
                 // Album(s)
                 for (let i = 0; i <  recordingResponse["releases"].length; i++) {
+
                     modalSongAlbum.textContent += `${recordingResponse["releases"][i].title}, `;
 
                     // Cover arts
@@ -340,33 +428,21 @@ function modalUpdate (mbid) {
                             if (releaseXhr.status === 200) {
 
                                 let releaseResponse = JSON.parse(releaseXhr.responseText);
-                                // console.log(releaseResponse);
+                                console.log(releaseResponse);
 
                                 // Covers
                                 releaseResponse.images.forEach(img => {
                                     const coverImg = document.createElement('img');
                                     coverImg.classList = "col-6";
-                                    coverImg.setAttribute('src', img.image);
+                                    coverImg.setAttribute('src', img['thumbnails']['small']);
                                     coverArts.appendChild(coverImg);
                                 });
-
-                            } else if (releaseXhr.status === 404) {
-
-                                // No cover message
-                                const coverMsg = document.createElement('small');
-                                coverMsg.classList = "col-12 text-muted";
-                                coverMsg.textContent = "Aucunes images trouvées !";
-                                coverArts.appendChild(coverMsg);
-
-                            } // End - releaseXhr - Status
-                        } // End - releaseXhr - readyState 4
-                    }); // End - releaseXhr - eventListener - readyStateChange
-
+                            }
+                        }
+                    });
                     releaseXhr.send();
-                    
-
                 }
-                 
+              
                 // Genres ?!
                 // Il y a t'il des genres ?
                 if (recordingResponse["genres"].length > 0) {
@@ -377,7 +453,6 @@ function modalUpdate (mbid) {
                     modalSongGenres.textContent += 'Aucun genres !';
                 }
                 
-
                 // Duration
                 let duration = recordingResponse["length"]/1000;      // En Sec
                 let sec = Math.round(duration%60) < 10 ? '0' + Math.round(duration%60) : Math.round(duration%60);
@@ -385,35 +460,35 @@ function modalUpdate (mbid) {
                 modalSongLength.textContent = `${min}:${sec}`;
 
                 // Rating
-                switch (recordingResponse.rating.value) {
-                    case 5:
-                        modalSongRate.textContent = "5/5 ⭐️ ⭐️ ⭐️ ⭐️ ⭐️";
-                        break;
-                    case 4:
-                        modalSongRate.textContent = "4/5 ⭐️ ⭐️ ⭐️ ⭐️";
-                        break;
-                    case 3:
-                        modalSongRate.textContent = "3/5 ⭐️ ⭐️ ⭐️";
-                        break;
-                    case 2:
-                        modalSongRate.textContent = "2/5 ⭐️ ⭐️";
-                        break;
-                    case 1:
-                        modalSongRate.textContent = "1/5 ⭐️";
-                        break;
-                    case 1:
-                        modalSongRate.textContent = "0/5";
-                        break;
-                    default:
-                        modalSongRate.textContent = "Il n'y a pas d'évaluation";
-                        break;
+                modalSongRateCounter.textContent = recordingResponse['rating']['votes-count'] + ' vote(s)';
+
+                if(recordingResponse.rating.value > 4.5 ){
+                    modalSongRate.innerHTML = `<small class="me-2">${recordingResponse.rating.value}/5</small><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i>`;
+                } else if (recordingResponse.rating.value <= 4.5 && recordingResponse.rating.value > 4 ) {
+                    modalSongRate.innerHTML = `<small class="me-2">${recordingResponse.rating.value}/5</small><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i><i class="fas fa-star-half sunflo-3"></i>`;
+                } else if (recordingResponse.rating.value <= 4 && recordingResponse.rating.value > 3.5 ) {
+                    modalSongRate.innerHTML = `<small class="me-2">${recordingResponse.rating.value}/5</small><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i>`;
+                } else if (recordingResponse.rating.value <= 3.5 && recordingResponse.rating.value > 3 ) {
+                    modalSongRate.innerHTML = `<small class="me-2">${recordingResponse.rating.value}/5</small><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i><i class="fas fa-star-half sunflo-3"></i>`;
+                } else if (recordingResponse.rating.value <= 3 && recordingResponse.rating.value > 2.5 ) {
+                    modalSongRate.innerHTML = `<small class="me-2">${recordingResponse.rating.value}/5</small><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i>`;
+                } else if (recordingResponse.rating.value <= 2.5 && recordingResponse.rating.value > 2 ) {
+                    modalSongRate.innerHTML = `<small class="me-2">${recordingResponse.rating.value}/5</small><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i><i class="fas fa-star-half sunflo-3"></i>`;
+                } else if (recordingResponse.rating.value <= 2 && recordingResponse.rating.value > 1.5 ) {
+                    modalSongRate.innerHTML = `<small class="me-2">${recordingResponse.rating.value}/5</small><i class="fas fa-star sunflo-3"></i><i class="fas fa-star sunflo-3"></i>`;
+                } else if (recordingResponse.rating.value <= 1.5 && recordingResponse.rating.value > 1 ) {
+                    modalSongRate.innerHTML = `<small class="me-2">${recordingResponse.rating.value}/5</small><i class="fas fa-star sunflo-3"></i><i class="fas fa-star-half sunflo-3"></i>`;
+                } else if (recordingResponse.rating.value <= 1 && recordingResponse.rating.value > 0.5 ) {
+                    modalSongRate.innerHTML = `<small class="me-2">${recordingResponse.rating.value}/5</small><i class="fas fa-star sunflo-3"></i>`;
+                } else if (recordingResponse.rating.value <= 0.5 && recordingResponse.rating.value > 0 ) {
+                    modalSongRate.innerHTML = `<small class="me-2">${recordingResponse.rating.value}/5</small><i class="fas fa-star-half sunflo-3"></i>`;
+                } else {
+                    modalSongRate.textContent = "Il n'y a pas d'évaluation";
                 }
-
-               
-
             }
         }
     });
 
     recordingXhr.send();
 }
+
